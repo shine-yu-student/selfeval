@@ -2,20 +2,20 @@
 
 config_file=$1
 tfm=$TIMEFORMAT
-$TIMEFORMAT='%3R'
+TIMEFORMAT='%3R'
 
 readarray -t arr -d "\n" < $config_file
 
-workspace_dir="${arr[1]}"
-sandbox_dir="${arr[2]}"
-checker_dir="${arr[3]}"
-compile_args="${arr[4]}"
+workspace_dir="${arr[0]}"
+sandbox_dir="${arr[1]}"
+checker_dir="${arr[2]}"
+compile_args="${arr[3]}"
 
 mkdir $sandbox_dir
 
 array_size="${#arr[@]}"
 
-ptr=5
+ptr=4
 
 while (($ptr<array_size))
 do
@@ -48,16 +48,24 @@ do
 	tptr=1
 	while [ $tptr -le $task_number ]
 	do
-		printf "Running on task $tptr:"
-		file_name=${file_pattern/{}/$tptr}
+		printf "Running on task $tptr:\n"
+		file_name=${file_pattern/\{\}/$tptr}
 		cp $workspace_dir/$task_name/$file_name.in $task_name.in
 		cp $workspace_dir/$task_name/$file_name.ans $task_name.ans
-		proc_time=$(time "timeout $time_limit ./std")
+		proc_time=$((time timeout $time_limit $sandbox_dir/std) 2>&1)
 		result=$?
 		if((result == 124))
 		then
 			printf "Time limit exceeded.\n"
+			tptr=$(expr $tptr + 1)
 			continue
 		fi
-		printf "Program exited with return value %d in %s seconds" $result $proc_time
+		printf "Program exited with return value %d in %.3f seconds.\n" $result $proc_time
+		$sandbox_dir/checker $sandbox_dir/$task_name.in $sandbox_dir/$task_name.out $sandbox_dir/$task_name.ans
+		tptr=$(expr $tptr + 1)
 	done
+	rm $sandbox_dir/$task_name.in $sandbox_dir/$task_name.out $sandbox_dir/$task_name.ans $sandbox_dir/std $sandbox_dir/checker
+	ptr=$(expr $ptr + 1)
+done
+rmdir $sandbox_dir
+# /home/tyoi/yse/oiclass/67431ae9752b8de081989ccf /home/tyoi/yse/oiclass/67431ae9752b8de081989ccf/sandbox
