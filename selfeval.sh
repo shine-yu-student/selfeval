@@ -3,6 +3,12 @@
 config_file=$1
 tfm=$TIMEFORMAT
 TIMEFORMAT='%3R'
+debug_patch=0
+
+if (($2 == "-d"))
+then
+	debug_patch=1
+fi
 
 readarray -t arr -d "\n" < $config_file
 
@@ -63,6 +69,10 @@ do
 		printf "Program exited with return value %d in %.3f seconds.\n" $result $proc_time
 		$sandbox_dir/checker $sandbox_dir/$task_name.in $sandbox_dir/$task_name.out $sandbox_dir/$task_name.ans
 		tptr=$(expr $tptr + 1)
+		if ((debug_patch == 1))
+		then
+			read
+		fi
 	done
 	rm $sandbox_dir/$task_name.in $sandbox_dir/$task_name.out $sandbox_dir/$task_name.ans $sandbox_dir/std $sandbox_dir/checker
 	ptr=$(expr $ptr + 1)
