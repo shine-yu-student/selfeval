@@ -58,7 +58,7 @@ do
 		file_name=${file_pattern/\{\}/$tptr}
 		cp $workspace_dir/$task_name/$file_name.in $task_name.in
 		cp $workspace_dir/$task_name/$file_name.ans $task_name.ans
-		proc_time=$((time timeout $time_limit $sandbox_dir/std) 2>&1)
+		proc_time=$((time timeout $time_limit ./std) 2>&1)
 		result=$?
 		if((result == 124))
 		then
@@ -67,14 +67,14 @@ do
 			continue
 		fi
 		printf "Program exited with return value %d in %.3f seconds.\n" $result $proc_time
-		$sandbox_dir/checker $sandbox_dir/$task_name.in $sandbox_dir/$task_name.out $sandbox_dir/$task_name.ans
+		./checker ./$task_name.in ./$task_name.out ./$task_name.ans
 		tptr=$(expr $tptr + 1)
 		if ((debug_patch == 1))
 		then
 			read
 		fi
 	done
-	rm $sandbox_dir/$task_name.in $sandbox_dir/$task_name.out $sandbox_dir/$task_name.ans $sandbox_dir/std $sandbox_dir/checker
+	rm ./$task_name.in ./$task_name.out ./$task_name.ans ./std ./checker
 	ptr=$(expr $ptr + 1)
 done
 rmdir $sandbox_dir
