@@ -26,12 +26,12 @@ void run()
 	fprintf(stderr, "Compiling checker: ");
 	if (pcn != checker)
 		system(format("g++ {}\\{}.cpp -std=c++20 -O2 -o {}\\checker --static", ckd, checker, sandbox).c_str());
-	fprintf(stderr, pcn != checker ? "completed.\n" : "skipped.\n");
-	pcn = checker;
+    fprintf(stderr, pcn != checker ? "done.\n" : "skipped.\n");
+    pcn = checker;
 	fprintf(stderr, "Compiling std: ");
 	system(format("g++ {1}\\{0}\\{0}.cpp -std=c++14 -O2 -o {2}\\std --static", task, workdir, sandbox).c_str());
-	fprintf(stderr, "completed.\n");
-	ps = filename.find("{}");
+    fprintf(stderr, "done.\n");
+    ps = filename.find("{}");
 	// system("pause");
 	for (int i = 1; i <= num; i++)
 	{
