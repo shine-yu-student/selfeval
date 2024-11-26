@@ -5,9 +5,12 @@ tfm=$TIMEFORMAT
 TIMEFORMAT='%3R'
 debug_patch=0
 
-if (($2 == "-d"))
+if (($# > 1))
 then
-	debug_patch=1
+	if (($2 == "-d"))
+	then
+		debug_patch=1
+	fi
 fi
 
 readarray -t arr -d "\n" < $config_file
