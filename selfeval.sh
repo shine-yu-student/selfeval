@@ -38,6 +38,11 @@ while (($ptr<array_size))
 do
 	readarray -d " " -t subarr < <(echo -e "${arr[$ptr]}")
 	task_name="${subarr[0]}"
+	if [ "$task_name" == "//" ]
+	then
+		ptr=$(expr $ptr + 1)
+		continue
+	fi
 	checker_name="${subarr[1]}"
 	file_pattern="${subarr[2]}"
 	task_number="${subarr[3]}"
